@@ -37,7 +37,7 @@
         h1 {
             font-family: 'Great Vibes', cursive;
             color: #ff6b6b;
-            font-size: 3.5em; /* Increased for more prominence */
+            font-size: 3.5em;
             margin-bottom: 20px;
         }
 
@@ -46,24 +46,24 @@
             color: #4a4a4a;
             line-height: 1.6;
             margin-bottom: 20px;
-            font-size: 1.1em; /* Slightly larger for readability */
+            font-size: 1.1em;
         }
 
         /* Interest line styling */
         #interestLine {
-            font-size: 1.3em; /* Adjusted for readability */
+            font-size: 1.3em;
             color: #4a4a4a;
-            margin-bottom: 10px; /* Spacing between the lines */
+            margin-bottom: 10px;
             display: inline-block;
         }
 
         /* Final pizza message styling */
         #dateQuestion {
-            font-size: 1.4em; /* Made more prominent */
+            font-size: 1.4em;
             font-weight: 600;
             color: #ff6b6b;
             margin-top: 15px;
-            margin-bottom: 30px; /* Added margin to keep spacing */
+            margin-bottom: 30px;
             display: inline-block;
         }
 
@@ -71,6 +71,7 @@
         .buttons {
             margin-top: 30px;
             position: relative;
+            height: 150px; /* Increased height for more movement space */
         }
 
         button {
@@ -87,7 +88,7 @@
             background: #4CAF50;
             color: white;
             z-index: 0;
-            margin-top: 30px; /* Added margin for consistency */
+            margin-top: 30px;
         }
 
         #noButton {
@@ -96,10 +97,9 @@
             z-index: 1;
             position: absolute;
             left: 50%;
-            top: 0;
-            transform: translateX(-50%);
-            width: 180px; /* Adjusted width to avoid overflow */
-            margin-top: 20px; /* Add margin to avoid overlapping */
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 180px;
         }
 
         button:hover {
@@ -152,12 +152,12 @@
         <div id="interestLine">We could discuss some awesome books 📚</div>
         
         <!-- Final pizza and chat invite -->
-        <p id="dateQuestion" style="opacity: 0;">Also, how about pizza and chat? 🍕🍰</p>
+        <p id="dateQuestion">Also, how about pizza and chat? 🍕🍰</p>
 
         <!-- Buttons section -->
         <div class="buttons">
             <button id="yesButton" onclick="startCelebration()">Absolutely!</button>
-            <button id="noButton" onmouseover="moveButton()">Maybe next time</button>
+            <button id="noButton" onmouseover="moveButton()" onclick="moveButton()">Not sure</button>
         </div>
 
         <div id="result"></div>
@@ -183,48 +183,55 @@
 
         // Array of dynamic "No" button texts
         const noButtonTexts = [
-            "Maybe next time",
-            "You win!",
-            "Okay, okay!",
-            "Fine, let's do it!"
+            "Not sure",
+            "I'll think about it",
+            "Okay, fine, you win",
+            "Let's go!"
         ];
 
         // Show next interest line with animation
         function showNextInterest() {
             const interestLine = document.getElementById('interestLine');
-            const dateQuestion = document.getElementById('dateQuestion');
             if (interestIndex < interests.length) {
                 interestLine.style.opacity = 0; // Hide previous text
                 setTimeout(() => {
                     interestLine.innerText = interests[interestIndex]; // Change the text
                     interestLine.style.opacity = 1; // Show new text
                     interestIndex++;
-                    if (interestIndex === interests.length) {
-                        dateQuestion.style.opacity = 1; // Show the pizza line
-                    }
                 }, 1000);
             }
         }
 
-        // Show next interest every 3 seconds
-        setInterval(showNextInterest, 3000);
+        // Show next interest every 1.5 seconds
+        setInterval(showNextInterest, 1500);
 
         // Move the "No" button to avoid clicks and keep it within bounds
         function moveButton() {
             const button = document.getElementById('noButton');
-            const container = document.querySelector('.container');
+            const container = document.querySelector('.buttons');
             const maxX = container.clientWidth - button.offsetWidth;
             const maxY = container.clientHeight - button.offsetHeight;
 
-            button.style.position = 'absolute';
-            button.style.left = Math.random() * maxX + 'px';
-            button.style.top = Math.random() * maxY + 'px';
+            // Calculate new position with a minimum movement distance
+            const minDistance = 100; // Minimum pixel distance to move
+            let newX, newY, distance;
+            do {
+                newX = Math.random() * maxX;
+                newY = Math.random() * maxY;
+                const currentX = parseFloat(button.style.left) || maxX / 2;
+                const currentY = parseFloat(button.style.top) || maxY / 2;
+                distance = Math.sqrt(Math.pow(newX - currentX, 2) + Math.pow(newY - currentY, 2));
+            } while (distance < minDistance);
+
+            button.style.left = newX + 'px';
+            button.style.top = newY + 'px';
+            button.style.transform = 'none'; // Remove the translate
 
             button.innerHTML = noButtonTexts[declineCount % noButtonTexts.length];
             
             declineCount++;
             if (declineCount >= 4) {
-                button.innerHTML = "Fine, let's do it!";
+                button.innerHTML = "Let's go!";
                 button.onclick = () => startCelebration();
             }
         }
@@ -232,7 +239,7 @@
         // Function to start celebration (confetti animation)
         function startCelebration() {
             document.getElementById('invitationContainer').innerHTML = `
-                <h1>🎉 It’s on! 🎉</h1>
+                <h1>🎉 It's on! 🎉</h1>
                 <p>Get ready for some fun! 🎈🍕</p>
             `;
 
