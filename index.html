@@ -80,8 +80,6 @@
             border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
-            margin: 0 10px;
-            position: absolute;
             display: inline-block;
         }
 
@@ -89,18 +87,18 @@
             background: #4CAF50;
             color: white;
             z-index: 0;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            margin-top: 30px; /* Added margin for consistency */
         }
 
         #noButton {
             background: #ff6b6b;
             color: white;
             z-index: 1;
-            top: 0;
+            position: absolute;
             left: 50%;
             transform: translateX(-50%);
+            width: 180px; /* Adjusted width to avoid overflow */
+            margin-top: 20px; /* Add margin to avoid overlapping */
         }
 
         button:hover {
@@ -182,6 +180,14 @@
             "Or you could teach me to bake cakes! 🍰"
         ];
 
+        // Array of dynamic "No" button texts
+        const noButtonTexts = [
+            "Maybe next time",
+            "You win!",
+            "Okay, okay!",
+            "Fine, let's do it!"
+        ];
+
         // Show next interest line with animation
         function showNextInterest() {
             const interestLine = document.getElementById('interestLine');
@@ -212,14 +218,16 @@
             // Ensure the button stays within bounds
             const newX = Math.random() * maxX;
             const newY = Math.random() * maxY;
-            
-            button.style.position = 'absolute';
+
             button.style.left = newX + 'px';
             button.style.top = newY + 'px';
 
+            // Change the text of the "No" button dynamically
+            button.innerHTML = noButtonTexts[declineCount % noButtonTexts.length];
+            
             declineCount++;
-            if (declineCount >= 3) {
-                button.innerHTML = "Oh alright, yes!";
+            if (declineCount >= 4) { // After 4 tries, accept
+                button.innerHTML = "Fine, let's do it!";
                 button.onclick = () => startCelebration();
             }
         }
