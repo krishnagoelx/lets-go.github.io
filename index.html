@@ -70,7 +70,9 @@
         /* Button styling */
         .buttons {
             margin-top: 30px;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 10px; /* Spacing between buttons */
         }
 
         button {
@@ -81,24 +83,17 @@
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-block;
+            min-width: 120px; /* Ensure buttons are consistent in size */
         }
 
         #yesButton {
             background: #4CAF50;
             color: white;
-            z-index: 0;
-            margin-top: 30px; /* Added margin for consistency */
         }
 
         #noButton {
             background: #ff6b6b;
             color: white;
-            z-index: 1;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 180px; /* Adjusted width to avoid overflow */
-            margin-top: 20px; /* Add margin to avoid overlapping */
         }
 
         button:hover {
