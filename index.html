@@ -61,36 +61,10 @@
             transform: translateX(-50%) scale(1.05);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .pizza {
-            width: 80px;
-            height: 80px;
-            background-color: #ffcc00; /* Cheese color */
-            border-radius: 50%;
-            position: relative;
+        .pizza-image {
+            width: 150px;
             margin: 20px auto;
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
         }
-        .pizza::before {
-            content: "";
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 0, 0, 0.8); /* Tomato sauce */
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        .pizza-topping {
-            width: 10px;
-            height: 10px;
-            background-color: #8b0000; /* Pepperoni */
-            border-radius: 50%;
-            position: absolute;
-        }
-        .topping-1 { top: 20%; left: 40%; }
-        .topping-2 { top: 50%; left: 60%; }
-        .topping-3 { top: 30%; left: 70%; }
-        .topping-4 { top: 70%; left: 50%; }
         .hidden {
             display: none;
         }
@@ -111,12 +85,7 @@
             <button id="noButton">Nah, I'll pass</button>
             <button id="yesButton">Let's do it!</button>
         </div>
-        <div class="pizza hidden">
-            <div class="pizza-topping topping-1"></div>
-            <div class="pizza-topping topping-2"></div>
-            <div class="pizza-topping topping-3"></div>
-            <div class="pizza-topping topping-4"></div>
-        </div>
+        <img src="https://www.google.com/imgres?q=pizza%20image%20without%20background&imgurl=https%3A%2F%2Fimg.freepik.com%2Fpremium-psd%2Fpng-pizza-fast-food-image-transparent-background_1022554-37.jpg&imgrefurl=https%3A%2F%2Fwww.freepik.com%2Fpremium-psd%2Fpng-pizza-fast-food-image-transparent-background_72077152.htm&docid=fbUurUA-7dj__M&tbnid=hcQOE35bUR-lkM&vet=12ahUKEwjfnLbq_O2IAxVedfUHHcIqMooQM3oECBkQAA..i&w=626&h=626&hcb=2&ved=2ahUKEwjfnLbq_O2IAxVedfUHHcIqMooQM3oECBkQAA" alt="Pizza" class="pizza-image hidden" id="pizzaImage">
     </div>
     <canvas id="confetti"></canvas>
 
@@ -125,7 +94,7 @@
         const yesButton = document.getElementById('yesButton');
         const container = document.querySelector('.container');
         const buttonContainer = document.querySelector('.button-container');
-        const pizza = document.querySelector('.pizza');
+        const pizzaImage = document.getElementById('pizzaImage');
         let noBtnClicks = 0;
 
         function moveNoButton() {
@@ -146,22 +115,22 @@
             }
         }
 
-        function servePizza() {
+        function showPizzaImage() {
             buttonContainer.style.display = 'none';
-            pizza.classList.remove('hidden');
+            pizzaImage.classList.remove('hidden');
             
             setTimeout(() => {
                 startConfetti();
             }, 100);
 
             setTimeout(() => {
-                container.innerHTML = '<h1>Awesome! 🍕🎉</h1><p>Get ready for a slice of fun!</p>';
+                container.innerHTML = '<h1>Awesome! 🍕🎉</h1><p>Enjoy your pizza adventure!</p>';
             }, 2500);
         }
 
         noButton.addEventListener('mouseover', moveNoButton);
         noButton.addEventListener('click', moveNoButton);
-        yesButton.addEventListener('click', servePizza);
+        yesButton.addEventListener('click', showPizzaImage);
 
         // Confetti
         const confettiCanvas = document.getElementById('confetti');
