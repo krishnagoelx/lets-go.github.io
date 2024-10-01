@@ -3,168 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pizza Adventure Awaits!</title>
+    <title>A Sweet Invitation</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-        body {
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
             font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ffd1dc, #ffc3a0);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #6e8efb, #a777e3);
-            overflow: hidden;
         }
         .container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
+            background: white;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             max-width: 400px;
             width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         h1 {
-            color: #4a4a4a;
-            margin-bottom: 30px;
-            font-weight: 600;
-        }
-        .button-container {
-            position: relative;
-            height: 120px;
+            color: #ff6b6b;
             margin-bottom: 20px;
         }
+        p {
+            color: #4a4a4a;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .interest-line {
+            font-size: 1.1em;
+            color: #4a4a4a;
+            margin: 10px 0;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        #dateQuestion {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #ff6b6b;
+            margin-top: 30px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
         button {
-            font-size: 18px;
-            padding: 12px 24px;
-            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 16px;
             border: none;
-            border-radius: 50px;
+            border-radius: 25px;
+            cursor: pointer;
             transition: all 0.3s ease;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            margin: 0 10px;
         }
         #yesButton {
-            background-color: #4CAF50;
+            background: #4CAF50;
             color: white;
-            bottom: 0;
         }
         #noButton {
-            background-color: #f44336;
+            background: #ff6b6b;
             color: white;
-            top: 0;
         }
         button:hover {
-            transform: translateX(-50%) scale(1.05);
+            transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .pizza-image {
-            width: 150px;
-            margin: 20px auto;
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 18px;
         }
-        .hidden {
-            display: none;
+        .cake {
+            width: 100px;
+            height: 100px;
+            background: #ffd1dc;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -50px;
+            left: -50px;
+            transition: all 0.5s ease;
         }
-        #confetti {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+        .cake::before {
+            content: "🍕";
+            font-size: 50px;
+            position: absolute;
+            top: 25px;
+            left: 25px;
+        }
+        .cake.animate {
+            transform: translate(200px, -100px) rotate(360deg);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Fancy a pizza adventure?</h1>
-        <div class="button-container">
-            <button id="noButton">Nah, I'll pass</button>
-            <button id="yesButton">Let's do it!</button>
+        <h1>Hey there!</h1>
+        <p>Let’s reschedule that plan. And this time, no cancellations! 😉</p>
+        
+        <div id="interests">
+            <div class="interest-line">1. We could discuss some awesome books 📚</div>
+            <div class="interest-line">2. Talk about the state of the Indian economy 📊</div>
+            <div class="interest-line">3. Share thoughts on philosophy and life 🤔</div>
+            <div class="interest-line">4. I could show you some cool card tricks 🃏</div>
+            <div class="interest-line">5. Chat about my startup 🚀 or the future of AI 🤖</div>
         </div>
-        <img src="https://png.pngtree.com/png-vector/20240226/ourlarge/pngtree-pizza-without-background-png-image_11879029.png" alt="Pizza" class="pizza-image hidden" id="pizzaImage">
+        
+        <p id="dateQuestion">Also, how about we grab some pizza? 🍕</p>
+        
+        <div class="buttons">
+            <button id="yesButton" onclick="showResult(true)">Absolutely!</button>
+            <button id="noButton" onmouseover="moveButton()" onclick="showResult(false)">Maybe next time</button>
+        </div>
+        
+        <div id="result"></div>
+        <div class="cake"></div>
     </div>
-    <canvas id="confetti"></canvas>
 
     <script>
-        const noButton = document.getElementById('noButton');
-        const yesButton = document.getElementById('yesButton');
-        const container = document.querySelector('.container');
-        const buttonContainer = document.querySelector('.button-container');
-        const pizzaImage = document.getElementById('pizzaImage');
-        let noBtnClicks = 0;
+        let declineCount = 0;
+        let interestsShown = 0;
 
-        function moveNoButton() {
-            const containerRect = buttonContainer.getBoundingClientRect();
-            const btnRect = noButton.getBoundingClientRect();
-            
-            let newX = Math.random() * (containerRect.width - btnRect.width);
-            let newY = Math.random() * (containerRect.height - btnRect.height);
-            
-            noButton.style.transition = 'all 0.3s ease';
-            noButton.style.left = `${newX}px`;
-            noButton.style.top = `${newY}px`;
-            
-            noBtnClicks++;
-            if (noBtnClicks >= 5) {
-                noButton.textContent = "Fine, you win!";
-                noButton.style.backgroundColor = "#FFA500";
-            }
-        }
-
-        function showPizzaImage() {
-            buttonContainer.style.display = 'none';
-            pizzaImage.classList.remove('hidden');
-            
-            setTimeout(() => {
-                startConfetti();
-            }, 100);
-
-            setTimeout(() => {
-                container.innerHTML = '<h1>Awesome! 🍕🎉</h1><p>Enjoy your pizza adventure!</p>';
-            }, 2500);
-        }
-
-        noButton.addEventListener('mouseover', moveNoButton);
-        noButton.addEventListener('click', moveNoButton);
-        yesButton.addEventListener('click', showPizzaImage);
-
-        // Confetti
-        const confettiCanvas = document.getElementById('confetti');
-        const ctx = confettiCanvas.getContext('2d');
-        const confettiPieces = [];
-
-        function startConfetti() {
-            confettiCanvas.width = window.innerWidth;
-            confettiCanvas.height = window.innerHeight;
-            for (let i = 0; i < 100; i++) {
-                confettiPieces.push({
-                    x: Math.random() * confettiCanvas.width,
-                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
-                    size: Math.random() * 5 + 5,
-                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    speed: Math.random() * 3 + 1
-                });
-            }
-            animateConfetti();
-        }
-
-        function animateConfetti() {
-            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-            confettiPieces.forEach(piece => {
-                piece.y += piece.speed;
-                if (piece.y > confettiCanvas.height) {
-                    piece.y = -piece.size;
+        // Show interest lines one by one
+        function showNextInterest() {
+            const interestLines = document.querySelectorAll('.interest-line');
+            if (interestsShown < interestLines.length) {
+                interestLines[interestsShown].style.opacity = 1;
+                interestsShown++;
+                if (interestsShown === interestLines.length) {
+                    document.getElementById('dateQuestion').style.opacity = 1;
                 }
-                ctx.beginPath();
-                ctx.arc(piece.x, piece.y, piece.size, 0, Math.PI * 2);
-                ctx.fillStyle = piece.color;
-                ctx.fill();
-            });
-            requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        // Show interests one by one every 1.5 seconds
+        setInterval(showNextInterest, 1500);
+
+        function moveButton() {
+            const button = document.getElementById('noButton');
+            const container = document.querySelector('.container');
+            const maxX = container.clientWidth - button.offsetWidth;
+            const maxY = container.clientHeight - button.offsetHeight;
+            
+            button.style.position = 'absolute';
+            button.style.left = Math.random() * maxX + 'px';
+            button.style.top = Math.random() * maxY + 'px';
+
+            declineCount++;
+            if (declineCount >= 3) {
+                button.innerHTML = "Oh alright, yes!";
+                button.onclick = () => showResult(true);
+            }
+        }
+
+        function showResult(accepted) {
+            const result = document.getElementById('result');
+            const cake = document.querySelector('.cake');
+            if (accepted) {
+                result.innerHTML = "Awesome! Pizza and conversation, it’s a date! 🎉";
+                result.style.color = "#4CAF50";
+                cake.classList.add('animate');
+            } else {
+                result.innerHTML = "No worries! The pizza (and my card tricks) will be waiting whenever you’re ready. 😊";
+                result.style.color = "#ff6b6b";
+            }
         }
     </script>
 </body>
