@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Sweet Invitation</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600&display=swap');
+        
+        /* Stylish fonts */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #ffd1dc, #ffc3a0);
+            background: linear-gradient(135deg, #f9c5d1, #ffe2c3);
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 18px;
         }
+
+        /* Container styling */
         .container {
             background: white;
             padding: 40px;
@@ -27,22 +32,32 @@
             position: relative;
             overflow: hidden;
         }
+
         h1 {
+            font-family: 'Great Vibes', cursive;
             color: #ff6b6b;
+            font-size: 2.5em;
             margin-bottom: 20px;
         }
+
         p {
             color: #4a4a4a;
             line-height: 1.6;
             margin-bottom: 20px;
         }
-        .interest-line {
-            font-size: 1.1em;
+
+        /* Animated interest line styling */
+        #interestLine {
+            font-size: 1.2em;
             color: #4a4a4a;
-            margin: 10px 0;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 1s ease, transform 1s ease;
+            position: absolute;
+            width: 100%;
+            left: 0;
         }
+
+        /* Styling for the pizza message */
         #dateQuestion {
             font-size: 1.2em;
             font-weight: 600;
@@ -51,9 +66,14 @@
             opacity: 0;
             transition: opacity 0.5s ease;
         }
+
+        /* Button styling */
         .buttons {
-            margin-top: 20px;
+            margin-top: 50px;
+            position: relative;
+            height: 60px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -62,24 +82,34 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 0 10px;
+            position: absolute;
         }
+
         #yesButton {
             background: #4CAF50;
             color: white;
+            z-index: 0;
         }
+
         #noButton {
             background: #ff6b6b;
             color: white;
+            z-index: 1;
+            top: 0;
+            left: 0;
         }
+
         button:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
+
         #result {
             margin-top: 20px;
             font-weight: bold;
             font-size: 18px;
         }
+
         .cake {
             width: 100px;
             height: 100px;
@@ -90,6 +120,7 @@
             left: -50px;
             transition: all 0.5s ease;
         }
+
         .cake::before {
             content: "🍕";
             font-size: 50px;
@@ -97,6 +128,7 @@
             top: 25px;
             left: 25px;
         }
+
         .cake.animate {
             transform: translate(200px, -100px) rotate(360deg);
         }
@@ -105,46 +137,59 @@
 <body>
     <div class="container">
         <h1>Hey there!</h1>
-        <p>Let’s reschedule that plan. And this time, no cancellations! 😉</p>
+        <p>Let's reschedule the plan! But no cancellations this time, okay? 😉</p>
         
-        <div id="interests">
-            <div class="interest-line">1. We could discuss some awesome books 📚</div>
-            <div class="interest-line">2. Talk about the state of the Indian economy 📊</div>
-            <div class="interest-line">3. Share thoughts on philosophy and life 🤔</div>
-            <div class="interest-line">4. I could show you some cool card tricks 🃏</div>
-            <div class="interest-line">5. Chat about my startup 🚀 or the future of AI 🤖</div>
-        </div>
+        <!-- Animated text for the interest lines -->
+        <div id="interestLine">We could discuss some awesome books 📚</div>
         
-        <p id="dateQuestion">Also, how about we grab some pizza? 🍕</p>
-        
+        <!-- Final pizza and chat invite -->
+        <p id="dateQuestion">Also, how about pizza and chat? 🍕</p>
+
+        <!-- Buttons section -->
         <div class="buttons">
             <button id="yesButton" onclick="showResult(true)">Absolutely!</button>
             <button id="noButton" onmouseover="moveButton()" onclick="showResult(false)">Maybe next time</button>
         </div>
-        
+
         <div id="result"></div>
         <div class="cake"></div>
     </div>
 
     <script>
         let declineCount = 0;
-        let interestsShown = 0;
+        let interestIndex = 0;
+        
+        // Array of interest lines
+        const interests = [
+            "We could discuss some awesome books 📚",
+            "Talk about the state of the Indian economy 📊",
+            "Dive deep into philosophy and life 🤔",
+            "I could show you some cool card tricks 🃏",
+            "Chat about AI and startups 🚀",
+            "Or you could teach me to bake cakes! 🍰"
+        ];
 
-        // Show interest lines one by one
+        // Show next interest line with animation
         function showNextInterest() {
-            const interestLines = document.querySelectorAll('.interest-line');
-            if (interestsShown < interestLines.length) {
-                interestLines[interestsShown].style.opacity = 1;
-                interestsShown++;
-                if (interestsShown === interestLines.length) {
-                    document.getElementById('dateQuestion').style.opacity = 1;
-                }
+            const interestLine = document.getElementById('interestLine');
+            if (interestIndex < interests.length) {
+                interestLine.style.opacity = 0; // Hide previous text
+                setTimeout(() => {
+                    interestLine.innerText = interests[interestIndex]; // Change the text
+                    interestLine.style.opacity = 1; // Show new text
+                    interestLine.style.transform = 'translateY(0px)'; // Reset any transform
+                    interestIndex++;
+                    if (interestIndex === interests.length) {
+                        document.getElementById('dateQuestion').style.opacity = 1; // Show the pizza line
+                    }
+                }, 1000);
             }
         }
 
-        // Show interests one by one every 1.5 seconds
-        setInterval(showNextInterest, 1500);
+        // Show next interest every 2 seconds
+        setInterval(showNextInterest, 3000);
 
+        // Move the "No" button to avoid clicks
         function moveButton() {
             const button = document.getElementById('noButton');
             const container = document.querySelector('.container');
@@ -162,6 +207,7 @@
             }
         }
 
+        // Show the result when the button is clicked
         function showResult(accepted) {
             const result = document.getElementById('result');
             const cake = document.querySelector('.cake');
