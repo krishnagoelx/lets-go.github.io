@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Adventure Awaits!</title>
+    <title>Pizza Adventure Awaits!</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
         body {
@@ -61,51 +61,36 @@
             transform: translateX(-50%) scale(1.05);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .coffee-cup {
+        .pizza {
             width: 80px;
-            height: 100px;
-            background-color: #6f4e37;
-            border-radius: 0 0 40% 40%;
+            height: 80px;
+            background-color: #ffcc00; /* Cheese color */
+            border-radius: 50%;
             position: relative;
             margin: 20px auto;
-            overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
         }
-        .coffee {
+        .pizza::before {
+            content: "";
             width: 100%;
-            height: 0;
-            background-color: #c0ffee;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.8); /* Tomato sauce */
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
             position: absolute;
-            bottom: 0;
-            transition: height 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            top: 0;
+            left: 0;
         }
-        .handle {
-            width: 20px;
-            height: 30px;
-            border: 6px solid #6f4e37;
-            border-left: none;
-            border-radius: 0 20px 20px 0;
-            position: absolute;
-            right: -26px;
-            top: 20px;
-        }
-        .steam {
-            position: absolute;
-            top: -20px;
-            left: 10px;
-            z-index: 1;
-        }
-        .steam-particle {
-            position: absolute;
-            background-color: #ffffff;
+        .pizza-topping {
+            width: 10px;
+            height: 10px;
+            background-color: #8b0000; /* Pepperoni */
             border-radius: 50%;
-            animation: steam 2s infinite;
-            opacity: 0;
+            position: absolute;
         }
-        @keyframes steam {
-            0% { transform: translateY(0) scale(1); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(-20px) scale(1.5); opacity: 0; }
-        }
+        .topping-1 { top: 20%; left: 40%; }
+        .topping-2 { top: 50%; left: 60%; }
+        .topping-3 { top: 30%; left: 70%; }
+        .topping-4 { top: 70%; left: 50%; }
         .hidden {
             display: none;
         }
@@ -121,19 +106,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Fancy a coffee adventure?</h1>
+        <h1>Fancy a pizza adventure?</h1>
         <div class="button-container">
             <button id="noButton">Nah, I'll pass</button>
             <button id="yesButton">Let's do it!</button>
         </div>
-        <div class="coffee-cup hidden">
-            <div class="steam">
-                <div class="steam-particle"></div>
-                <div class="steam-particle"></div>
-                <div class="steam-particle"></div>
-            </div>
-            <div class="coffee"></div>
-            <div class="handle"></div>
+        <div class="pizza hidden">
+            <div class="pizza-topping topping-1"></div>
+            <div class="pizza-topping topping-2"></div>
+            <div class="pizza-topping topping-3"></div>
+            <div class="pizza-topping topping-4"></div>
         </div>
     </div>
     <canvas id="confetti"></canvas>
@@ -143,8 +125,7 @@
         const yesButton = document.getElementById('yesButton');
         const container = document.querySelector('.container');
         const buttonContainer = document.querySelector('.button-container');
-        const coffeeCup = document.querySelector('.coffee-cup');
-        const coffee = document.querySelector('.coffee');
+        const pizza = document.querySelector('.pizza');
         let noBtnClicks = 0;
 
         function moveNoButton() {
@@ -165,30 +146,22 @@
             }
         }
 
-        function fillCoffee() {
+        function servePizza() {
             buttonContainer.style.display = 'none';
-            coffeeCup.classList.remove('hidden');
+            pizza.classList.remove('hidden');
             
             setTimeout(() => {
-                coffee.style.height = '80%';
                 startConfetti();
             }, 100);
 
             setTimeout(() => {
-                container.innerHTML = '<h1>Awesome! ☕🎉</h1><p>I\'ll text you the details. Get ready for a brew-tiful time!</p>';
+                container.innerHTML = '<h1>Awesome! 🍕🎉</h1><p>Get ready for a slice of fun!</p>';
             }, 2500);
         }
 
         noButton.addEventListener('mouseover', moveNoButton);
         noButton.addEventListener('click', moveNoButton);
-        yesButton.addEventListener('click', fillCoffee);
-
-        // Steam animation
-        const steamParticles = document.querySelectorAll('.steam-particle');
-        steamParticles.forEach((particle, index) => {
-            particle.style.left = `${index * 20}px`;
-            particle.style.animationDelay = `${index * 0.5}s`;
-        });
+        yesButton.addEventListener('click', servePizza);
 
         // Confetti
         const confettiCanvas = document.getElementById('confetti');
