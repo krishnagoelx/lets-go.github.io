@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Adventure Awaits!</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #4a4a4a;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .button-container {
+            position: relative;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 18px;
+            padding: 12px 24px;
+            cursor: pointer;
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #yesButton {
+            background-color: #4CAF50;
+            color: white;
+            bottom: 0;
+        }
+        #noButton {
+            background-color: #f44336;
+            color: white;
+            top: 0;
+        }
+        button:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .coffee-cup {
+            width: 80px;
+            height: 100px;
+            background-color: #6f4e37;
+            border-radius: 0 0 40% 40%;
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        .coffee {
+            width: 100%;
+            height: 0;
+            background-color: #c0ffee;
+            position: absolute;
+            bottom: 0;
+            transition: height 2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .handle {
+            width: 20px;
+            height: 30px;
+            border: 6px solid #6f4e37;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            position: absolute;
+            right: -26px;
+            top: 20px;
+        }
+        .steam {
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            z-index: 1;
+        }
+        .steam-particle {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: steam 2s infinite;
+            opacity: 0;
+        }
+        @keyframes steam {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-20px) scale(1.5); opacity: 0; }
+        }
+        .hidden {
+            display: none;
+        }
+        #confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Fancy a coffee adventure?</h1>
+        <div class="button-container">
+            <button id="noButton">Nah, I'll pass</button>
+            <button id="yesButton">Let's do it!</button>
+        </div>
+        <div class="coffee-cup hidden">
+            <div class="steam">
+                <div class="steam-particle"></div>
+                <div class="steam-particle"></div>
+                <div class="steam-particle"></div>
+            </div>
+            <div class="coffee"></div>
+            <div class="handle"></div>
+        </div>
+    </div>
+    <canvas id="confetti"></canvas>
+
+    <script>
+        const noButton = document.getElementById('noButton');
+        const yesButton = document.getElementById('yesButton');
+        const container = document.querySelector('.container');
+        const buttonContainer = document.querySelector('.button-container');
+        const coffeeCup = document.querySelector('.coffee-cup');
+        const coffee = document.querySelector('.coffee');
+        let noBtnClicks = 0;
+
+        function moveNoButton() {
+            const containerRect = buttonContainer.getBoundingClientRect();
+            const btnRect = noButton.getBoundingClientRect();
+            
+            let newX = Math.random() * (containerRect.width - btnRect.width);
+            let newY = Math.random() * (containerRect.height - btnRect.height);
+            
+            noButton.style.transition = 'all 0.3s ease';
+            noButton.style.left = `${newX}px`;
+            noButton.style.top = `${newY}px`;
+            
+            noBtnClicks++;
+            if (noBtnClicks >= 5) {
+                noButton.textContent = "Fine, you win!";
+                noButton.style.backgroundColor = "#FFA500";
+            }
+        }
+
+        function fillCoffee() {
+            buttonContainer.style.display = 'none';
+            coffeeCup.classList.remove('hidden');
+            
+            setTimeout(() => {
+                coffee.style.height = '80%';
+                startConfetti();
+            }, 100);
+
+            setTimeout(() => {
+                container.innerHTML = '<h1>Awesome! ☕🎉</h1><p>I\'ll text you the details. Get ready for a brew-tiful time!</p>';
+            }, 2500);
+        }
+
+        noButton.addEventListener('mouseover', moveNoButton);
+        noButton.addEventListener('click', moveNoButton);
+        yesButton.addEventListener('click', fillCoffee);
+
+        // Steam animation
+        const steamParticles = document.querySelectorAll('.steam-particle');
+        steamParticles.forEach((particle, index) => {
+            particle.style.left = `${index * 20}px`;
+            particle.style.animationDelay = `${index * 0.5}s`;
+        });
+
+        // Confetti
+        const confettiCanvas = document.getElementById('confetti');
+        const ctx = confettiCanvas.getContext('2d');
+        const confettiPieces = [];
+
+        function startConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            for (let i = 0; i < 100; i++) {
+                confettiPieces.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                    size: Math.random() * 5 + 5,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    speed: Math.random() * 3 + 1
+                });
+            }
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiPieces.forEach(piece => {
+                piece.y += piece.speed;
+                if (piece.y > confettiCanvas.height) {
+                    piece.y = -piece.size;
+                }
+                ctx.beginPath();
+                ctx.arc(piece.x, piece.y, piece.size, 0, Math.PI * 2);
+                ctx.fillStyle = piece.color;
+                ctx.fill();
+            });
+            requestAnimationFrame(animateConfetti);
+        }
+    </script>
+</body>
+</html>
