@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Sweet Invitation</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Rubik:wght@400;500;700&display=swap');
         
-        /* Stylish fonts */
+        /* Stylish fonts and base styles */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Rubik', sans-serif;
             background: linear-gradient(135deg, #f9c5d1, #ffe2c3);
             display: flex;
             justify-content: center;
@@ -36,7 +36,7 @@
         h1 {
             font-family: 'Great Vibes', cursive;
             color: #ff6b6b;
-            font-size: 2.5em;
+            font-size: 3em;
             margin-bottom: 20px;
         }
 
@@ -46,7 +46,7 @@
             margin-bottom: 20px;
         }
 
-        /* Animated interest line styling */
+        /* Interest line styling */
         #interestLine {
             font-size: 1.2em;
             color: #4a4a4a;
@@ -57,9 +57,9 @@
             left: 0;
         }
 
-        /* Styling for the pizza message */
+        /* Final pizza message styling */
         #dateQuestion {
-            font-size: 1.2em;
+            font-size: 1.3em;
             font-weight: 600;
             color: #ff6b6b;
             margin-top: 30px;
@@ -110,6 +110,7 @@
             font-size: 18px;
         }
 
+        /* Cake (pizza) element */
         .cake {
             width: 100px;
             height: 100px;
@@ -132,33 +133,47 @@
         .cake.animate {
             transform: translate(200px, -100px) rotate(360deg);
         }
+
+        /* Confetti animation */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="invitationContainer">
         <h1>Hey there!</h1>
         <p>Let's reschedule the plan! But no cancellations this time, okay? 😉</p>
         
-        <!-- Animated text for the interest lines -->
+        <!-- Interest line -->
         <div id="interestLine">We could discuss some awesome books 📚</div>
         
         <!-- Final pizza and chat invite -->
-        <p id="dateQuestion">Also, how about pizza and chat? 🍕</p>
+        <p id="dateQuestion">Also, how about pizza and chat? 🍕🍰</p>
 
         <!-- Buttons section -->
         <div class="buttons">
-            <button id="yesButton" onclick="showResult(true)">Absolutely!</button>
-            <button id="noButton" onmouseover="moveButton()" onclick="showResult(false)">Maybe next time</button>
+            <button id="yesButton" onclick="startCelebration()">Absolutely!</button>
+            <button id="noButton" onmouseover="moveButton()">Maybe next time</button>
         </div>
 
         <div id="result"></div>
         <div class="cake"></div>
     </div>
 
+    <!-- Confetti Canvas -->
+    <canvas id="confettiCanvas" class="hidden"></canvas>
+
     <script>
         let declineCount = 0;
         let interestIndex = 0;
-        
+
         // Array of interest lines
         const interests = [
             "We could discuss some awesome books 📚",
@@ -186,10 +201,10 @@
             }
         }
 
-        // Show next interest every 2 seconds
+        // Show next interest every 3 seconds
         setInterval(showNextInterest, 3000);
 
-        // Move the "No" button to avoid clicks
+        // Move the "No" button to avoid clicks and keep it within bounds
         function moveButton() {
             const button = document.getElementById('noButton');
             const container = document.querySelector('.container');
@@ -198,27 +213,60 @@
             
             button.style.position = 'absolute';
             button.style.left = Math.random() * maxX + 'px';
-            button.style.top = Math.random() * maxY + 'px';
+            button.style.top = Math.random() * (maxY - 10) + 'px';  // Ensures it's within the visible frame
 
             declineCount++;
             if (declineCount >= 3) {
                 button.innerHTML = "Oh alright, yes!";
-                button.onclick = () => showResult(true);
+                button.onclick = () => startCelebration();
             }
         }
 
-        // Show the result when the button is clicked
-        function showResult(accepted) {
-            const result = document.getElementById('result');
-            const cake = document.querySelector('.cake');
-            if (accepted) {
-                result.innerHTML = "Awesome! Pizza and conversation, Let's finalise the time and meet 🎉";
-                result.style.color = "#4CAF50";
-                cake.classList.add('animate');
-            } else {
-                result.innerHTML = "No worries! The pizza (and my card tricks) will be waiting whenever you’re ready. 😊";
-                result.style.color = "#ff6b6b";
+        // Function to start celebration (confetti animation)
+        function startCelebration() {
+            document.getElementById('invitationContainer').innerHTML = `
+                <h1>🎉 It’s a Plan! 🎉</h1>
+                <p>Get ready for an awesome time! 🎈🍕</p>
+            `;
+
+            // Start confetti
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            const confettiPieces = [];
+
+            canvas.classList.remove('hidden');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            function createConfetti() {
+                for (let i = 0; i < 200; i++) {
+                    confettiPieces.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height - canvas.height,
+                        size: Math.random() * 5 + 5,
+                        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                        speed: Math.random() * 3 + 1
+                    });
+                }
             }
+
+            function animateConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiPieces.forEach(piece => {
+                    piece.y += piece.speed;
+                    if (piece.y > canvas.height) {
+                        piece.y = -piece.size;
+                    }
+                    ctx.beginPath();
+                    ctx.arc(piece.x, piece.y, piece.size, 0, Math.PI * 2);
+                    ctx.fillStyle = piece.color;
+                    ctx.fill();
+                });
+                requestAnimationFrame(animateConfetti);
+            }
+
+            createConfetti();
+            animateConfetti();
         }
     </script>
 </body>
