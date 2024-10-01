@@ -33,62 +33,65 @@
             overflow: hidden;
         }
 
+        /* Header styling */
         h1 {
             font-family: 'Great Vibes', cursive;
             color: #ff6b6b;
-            font-size: 3em;
+            font-size: 3.5em; /* Increased for more prominence */
             margin-bottom: 20px;
         }
 
+        /* Paragraph text styling */
         p {
             color: #4a4a4a;
             line-height: 1.6;
             margin-bottom: 20px;
+            font-size: 1.1em; /* Slightly larger for readability */
         }
 
         /* Interest line styling */
         #interestLine {
-            font-size: 1.2em;
+            font-size: 1.3em; /* Adjusted for readability */
             color: #4a4a4a;
-            opacity: 0;
-            transition: opacity 1s ease, transform 1s ease;
-            position: absolute;
-            width: 100%;
-            left: 0;
+            margin-bottom: 10px; /* Spacing between the lines */
+            display: inline-block;
         }
 
         /* Final pizza message styling */
         #dateQuestion {
-            font-size: 1.3em;
+            font-size: 1.4em; /* Made more prominent */
             font-weight: 600;
             color: #ff6b6b;
-            margin-top: 30px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
+            margin-top: 15px;
+            margin-bottom: 30px; /* Added margin to keep spacing */
+            display: inline-block;
         }
 
         /* Button styling */
         .buttons {
-            margin-top: 50px;
+            margin-top: 30px;
             position: relative;
-            height: 60px;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 28px;
             font-size: 16px;
             border: none;
-            border-radius: 25px;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
             margin: 0 10px;
             position: absolute;
+            display: inline-block;
         }
 
         #yesButton {
             background: #4CAF50;
             color: white;
             z-index: 0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         #noButton {
@@ -96,21 +99,16 @@
             color: white;
             z-index: 1;
             top: 0;
-            left: 0;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         button:hover {
-            transform: translateY(-3px);
+            transform: translateY(-3px) scale(1.05);
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        #result {
-            margin-top: 20px;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        /* Cake (pizza) element */
+        /* Cake element */
         .cake {
             width: 100px;
             height: 100px;
@@ -155,7 +153,7 @@
         <div id="interestLine">We could discuss some awesome books 📚</div>
         
         <!-- Final pizza and chat invite -->
-        <p id="dateQuestion">Also, how about pizza and chat? 🍕🍰</p>
+        <p id="dateQuestion" style="opacity: 0;">Also, how about pizza and chat? 🍕🍰</p>
 
         <!-- Buttons section -->
         <div class="buttons">
@@ -187,15 +185,15 @@
         // Show next interest line with animation
         function showNextInterest() {
             const interestLine = document.getElementById('interestLine');
+            const dateQuestion = document.getElementById('dateQuestion');
             if (interestIndex < interests.length) {
                 interestLine.style.opacity = 0; // Hide previous text
                 setTimeout(() => {
                     interestLine.innerText = interests[interestIndex]; // Change the text
                     interestLine.style.opacity = 1; // Show new text
-                    interestLine.style.transform = 'translateY(0px)'; // Reset any transform
                     interestIndex++;
                     if (interestIndex === interests.length) {
-                        document.getElementById('dateQuestion').style.opacity = 1; // Show the pizza line
+                        dateQuestion.style.opacity = 1; // Show the pizza line
                     }
                 }, 1000);
             }
@@ -210,10 +208,14 @@
             const container = document.querySelector('.container');
             const maxX = container.clientWidth - button.offsetWidth;
             const maxY = container.clientHeight - button.offsetHeight;
+
+            // Ensure the button stays within bounds
+            const newX = Math.random() * maxX;
+            const newY = Math.random() * maxY;
             
             button.style.position = 'absolute';
-            button.style.left = Math.random() * maxX + 'px';
-            button.style.top = Math.random() * (maxY - 10) + 'px';  // Ensures it's within the visible frame
+            button.style.left = newX + 'px';
+            button.style.top = newY + 'px';
 
             declineCount++;
             if (declineCount >= 3) {
